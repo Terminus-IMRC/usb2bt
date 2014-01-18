@@ -107,7 +107,6 @@ void outputToBT(uint8_t key, MODIFIERKEYS mod, char ch, enum pk_ident ident)
 void outputToBTControl(MODIFIERKEYS mod)
 {
   /* note that mod.bm* are all 1 bit */
-  Serial.println(mod.bmLeftCtrl);
   if(( mod.bmLeftCtrl )||( mod.bmRightCtrl ))
     digitalWrite(PORT_CTRL, HIGH);
   else
