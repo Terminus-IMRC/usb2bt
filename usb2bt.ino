@@ -11,9 +11,9 @@ enum pk_ident{
 };
 
 void setNeededPinsToOutput();
-void modRowAndColumn(uint8_t key, int8_t *row, int8_t *col);
+void modRowAndColumn(char ch, int8_t *row, int8_t *col);
 void modPinNoForRowAndColumn(int8_t row, int8_t col, int8_t *prow, int8_t *pcol);
-void outputToBT(uint8_t key, enum pk_ident ident);
+void outputToBT(uint8_t key, MODIFIERKEYS mod, char ch, enum pk_ident ident);
 void outputToBTControl(MODIFIERKEYS mod);
 
 void setNeededPinsToOutput()
@@ -27,17 +27,22 @@ void setNeededPinsToOutput()
   for(i=0; i<=14; i++)
     pinMode(table_pinno_col[i], OUTPUT);
 
+  pinMode(PORT_CTRL, OUTPUT);
+  pinMode(PORT_ALT, OUTPUT);
+  pinMode(PORT_SHIFT, OUTPUT);
+  pinMode(PORT_GUI, OUTPUT);
+
   return;
 }
 
-void modRowAndColumn(uint8_t key, int8_t *row, int8_t *col)
+void modRowAndColumn(char ch, int8_t *row, int8_t *col)
 {
-  if((key<0)||(key>=0xff)){
+  if((ch<0)||(ch>=0xff)){
     *row=-1;
     *col=-1;
   }else{
-    *row=table_normal_keys[key][0];
-    *col=table_normal_keys[key][1];
+    *row=table_normal_keys[ch][0];
+    *col=table_normal_keys[ch][1];
   }
   
   return;
@@ -56,23 +61,45 @@ void modPinNoForRowAndColumn(int8_t row, int8_t col, int8_t *prow, int8_t *pcol)
   return;
 }
 
-void outputToBT(uint8_t key, enum pk_ident ident)
+void outputToBT(uint8_t key, MODIFIERKEYS mod, char ch, enum pk_ident ident)
 {
   int8_t r, c;
   static int8_t pr, pc;
 
-  modRowAndColumn(key, &r, &c);
+  Serial.print("I:outputToBt is called (char=");
+  Serial.print((uint8_t)ch);
+  Serial.print("(");
+  Serial.print(ch);
+  Serial.println("))");
+
+  if(ch>='A' && ch<='Z'){
+    Serial.println("I:outputToBT:ch is assumed to lower.");
+    ch-='A'-'a';
+  }
+
+  modRowAndColumn(ch, &r, &c);
 
   if((r!=-1)&&(c!=-1)){
     modPinNoForRowAndColumn(r, c, &pr, &pc);
     if((pr!=-1)&&(pc!=-1)){
       digitalWrite(LEDPIN, LOW);
+      Serial.print("I:outputToBT:(pr,pc,ident)=(");
+      Serial.print(pr);
+      Serial.print(",");
+      Serial.print(pc);
+      Serial.print(",");
+      Serial.print(ident==PK_DN?"DN":"UP");
+      Serial.println(")");
       digitalWrite(pr, ident==PK_DN?HIGH:LOW);
       digitalWrite(pc, ident==PK_DN?HIGH:LOW);
-    }else
+    }else{
+      Serial.println("W:Row or column is undefined in modPinNoForRowAndColumn.");
       digitalWrite(LEDPIN, HIGH); /* means error */
-  }else
+    }
+  }else{
+    Serial.println("W:Row or column is undefined in modRowAndColumn.");
     digitalWrite(LEDPIN, HIGH); /* means error */
+  }
 
   return;
 }
@@ -80,6 +107,7 @@ void outputToBT(uint8_t key, enum pk_ident ident)
 void outputToBTControl(MODIFIERKEYS mod)
 {
   /* note that mod.bm* are all 1 bit */
+  Serial.println(mod.bmLeftCtrl);
   if(( mod.bmLeftCtrl )||( mod.bmRightCtrl ))
     digitalWrite(PORT_CTRL, HIGH);
   else
@@ -100,7 +128,7 @@ void outputToBTControl(MODIFIERKEYS mod)
 
 class KbdRptParser : public KeyboardReportParser
 {
-        void PrintKey(uint8_t mod, uint8_t key, enum pk_ident ident);
+        void PrintKey(uint8_t mod, uint8_t key, char ch, enum pk_ident ident);
 
 protected:
         virtual void OnControlKeysChanged(uint8_t before, uint8_t after);
@@ -110,7 +138,7 @@ protected:
 	virtual void OnKeyPressed(uint8_t key);
 };
 
-void KbdRptParser::PrintKey(uint8_t m, uint8_t key, enum pk_ident ident)
+void KbdRptParser::PrintKey(uint8_t m, uint8_t key, char ch, enum pk_ident ident)
 {
     MODIFIERKEYS mod;
     *((uint8_t*)&mod) = m;
@@ -128,15 +156,15 @@ void KbdRptParser::PrintKey(uint8_t m, uint8_t key, enum pk_ident ident)
     Serial.print((mod.bmRightAlt    == 1) ? "A" : " ");
     Serial.println((mod.bmRightGUI    == 1) ? "G" : " ");
 
-    outputToBT(key, ident);
+    outputToBT(key, mod, ch, ident);
 };
 
 void KbdRptParser::OnKeyDown(uint8_t mod, uint8_t key)
 {
     Serial.print("DN ");
-    PrintKey(mod, key, PK_DN);
     uint8_t c = OemToAscii(mod, key);
-
+    PrintKey(mod, key, (char)c, PK_DN);
+   
     if (c)
         OnKeyPressed(c);
 }
@@ -181,7 +209,8 @@ void KbdRptParser::OnControlKeysChanged(uint8_t before, uint8_t after) {
 void KbdRptParser::OnKeyUp(uint8_t mod, uint8_t key)
 {
     Serial.print("UP ");
-    PrintKey(mod, key, PK_UP);
+    uint8_t c = OemToAscii(mod, key);
+    PrintKey(mod, key, (char)c, PK_UP);
 }
 
 void KbdRptParser::OnKeyPressed(uint8_t key)
