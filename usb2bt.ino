@@ -226,9 +226,45 @@ uint32_t next_time;
 
 KbdRptParser Prs;
 
+void fancy_test()
+{
+  int i;
+
+  for(i=0; i<=7; i++){
+    digitalWrite(table_pinno_row[i], HIGH);
+    delay(100);
+    digitalWrite(table_pinno_row[i], LOW);
+    delay(100);
+  }
+  for(i=0; i<=14; i++){
+    digitalWrite(table_pinno_col[i], HIGH);
+    delay(100);
+    digitalWrite(table_pinno_col[i], LOW);
+    delay(100);
+  }
+  digitalWrite(PORT_CTRL, HIGH);
+  delay(100);
+  digitalWrite(PORT_CTRL, LOW);
+  delay(100);
+  digitalWrite(PORT_ALT, HIGH);
+  delay(100);
+  digitalWrite(PORT_ALT, LOW);
+  delay(100);
+  digitalWrite(PORT_SHIFT, HIGH);
+  delay(100);
+  digitalWrite(PORT_SHIFT, LOW);
+  delay(100);
+  digitalWrite(PORT_GUI, HIGH);
+  delay(100);
+  digitalWrite(PORT_GUI, LOW);
+
+  return;
+}
+
 void setup()
 {
   setNeededPinsToOutput();
+  fancy_test();
 
     Serial.begin( 115200 );
     /* in this program we use serial port only for debug */
