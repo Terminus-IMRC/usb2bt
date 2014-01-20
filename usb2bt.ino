@@ -277,7 +277,7 @@ void setup()
 	while(1){
 		digitalWrite(LEDPIN, HIGH);
 		delay(200);
-		digitalWrite(LEDPIN, HIGH);
+		digitalWrite(LEDPIN, LOW);
 		delay(200);
 	}
     }
