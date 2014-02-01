@@ -232,30 +232,30 @@ void fancy_test()
 
   for(i=0; i<=7; i++){
     digitalWrite(table_pinno_row[i], HIGH);
-    delay(100);
+    delay(10);
     digitalWrite(table_pinno_row[i], LOW);
-    delay(100);
+    delay(10);
   }
   for(i=0; i<=14; i++){
     digitalWrite(table_pinno_col[i], HIGH);
-    delay(100);
+    delay(10);
     digitalWrite(table_pinno_col[i], LOW);
-    delay(100);
+    delay(10);
   }
   digitalWrite(PORT_CTRL, HIGH);
-  delay(100);
+  delay(10);
   digitalWrite(PORT_CTRL, LOW);
-  delay(100);
+  delay(10);
   digitalWrite(PORT_ALT, HIGH);
-  delay(100);
+  delay(10);
   digitalWrite(PORT_ALT, LOW);
-  delay(100);
+  delay(10);
   digitalWrite(PORT_SHIFT, HIGH);
-  delay(100);
+  delay(10);
   digitalWrite(PORT_SHIFT, LOW);
-  delay(100);
+  delay(10);
   digitalWrite(PORT_GUI, HIGH);
-  delay(100);
+  delay(10);
   digitalWrite(PORT_GUI, LOW);
 
   return;
