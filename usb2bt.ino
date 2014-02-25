@@ -11,7 +11,7 @@ enum pk_ident{
 };
 
 void setNeededPinsToOutput();
-void modRowAndColumn(char ch, int8_t *row, int8_t *col);
+void modRowAndColumn(uint8_t oem, int8_t *row, int8_t *col);
 void modPinNoForRowAndColumn(int8_t row, int8_t col, int8_t *prow, int8_t *pcol);
 void outputToBT(uint8_t key, MODIFIERKEYS mod, char ch, enum pk_ident ident);
 void outputToBTControl(MODIFIERKEYS mod);
@@ -35,9 +35,9 @@ void setNeededPinsToOutput()
   return;
 }
 
-void modRowAndColumn(char ch, int8_t *row, int8_t *col)
+void modRowAndColumn(uint8_t oem, int8_t *row, int8_t *col)
 {
-  if((ch<0)||(ch>=0xff)){
+  if((ch<0)||(ch>0xE7)){
     *row=-1;
     *col=-1;
   }else{
@@ -73,11 +73,11 @@ void outputToBT(uint8_t key, MODIFIERKEYS mod, char ch, enum pk_ident ident)
   Serial.println("))");
 
   if(ch>='A' && ch<='Z'){
-    Serial.println("I:outputToBT:ch is assumed to lower.");
+    Serial.println("I:outputToBT:ch is assumed to be lower.");
     ch-='A'-'a';
   }
 
-  modRowAndColumn(ch, &r, &c);
+  modRowAndColumn(key, &r, &c);
 
   if((r!=-1)&&(c!=-1)){
     modPinNoForRowAndColumn(r, c, &pr, &pc);
