@@ -1,3 +1,5 @@
+#ifndef BTPINS_INSIDE
+#define BTPINS_INSIDE
 int8_t table_pinno_row[8]={
 	22, 23, 24, 25, 26, 27, 28, 29
 };
@@ -10,3 +12,4 @@ int8_t table_pinno_col[15]={
 #define PORT_ALT   49
 #define PORT_SHIFT 50
 #define PORT_GUI   51
+#endif /* BTPINS_INSIDE */
