@@ -37,12 +37,12 @@ void setNeededPinsToOutput()
 
 void modRowAndColumn(uint8_t oem, int8_t *row, int8_t *col)
 {
-  if((ch<0)||(ch>0xE7)){
+  if((oem<0)||(oem>0xE7)){
     *row=-1;
     *col=-1;
   }else{
-    *row=table_normal_keys[ch][0];
-    *col=table_normal_keys[ch][1];
+    *row=table_normal_keys[oem][0];
+    *col=table_normal_keys[oem][1];
   }
   
   return;
