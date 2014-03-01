@@ -263,9 +263,6 @@ void fancy_test()
 
 void setup()
 {
-  setNeededPinsToOutput();
-  fancy_test();
-
     Serial.begin( 115200 );
     /* in this program we use serial port only for debug */
     //while (!Serial); // Wait for serial port to connect - used on Leonardo, Teensy and other boards with built-in USB CDC serial connection
@@ -282,6 +279,9 @@ void setup()
 	}
     }
     delay( 200 );
+    
+    setNeededPinsToOutput();
+    fancy_test();
 
     next_time = millis() + 5000;
 
