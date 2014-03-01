@@ -1,19 +1,19 @@
 #include <hidboot.h>
 #include <usbhub.h>
+#include <stdint.h>
 
 #include "btkeytab.h"
 #include "btpins.h"
 
 #define LEDPIN 13
 
-enum pk_ident{
-  PK_DN, PK_UP
-};
+#define PK_DN (((uint8_t)0))
+#define PK_UP ((!PK_DN))
 
 void setNeededPinsToOutput();
 void modRowAndColumn(uint8_t oem, int8_t *row, int8_t *col);
 void modPinNoForRowAndColumn(int8_t row, int8_t col, int8_t *prow, int8_t *pcol);
-void outputToBT(uint8_t key, MODIFIERKEYS mod, char ch, enum pk_ident ident);
+void outputToBT(uint8_t key, MODIFIERKEYS mod, char ch, uint8_t ident);
 void outputToBTControl(MODIFIERKEYS mod);
 
 void setNeededPinsToOutput()
@@ -61,7 +61,7 @@ void modPinNoForRowAndColumn(int8_t row, int8_t col, int8_t *prow, int8_t *pcol)
   return;
 }
 
-void outputToBT(uint8_t key, MODIFIERKEYS mod, char ch, enum pk_ident ident)
+void outputToBT(uint8_t key, MODIFIERKEYS mod, char ch, uint8_t ident)
 {
   int8_t r, c;
   static int8_t pr, pc;
@@ -127,7 +127,7 @@ void outputToBTControl(MODIFIERKEYS mod)
 
 class KbdRptParser : public KeyboardReportParser
 {
-        void PrintKey(uint8_t mod, uint8_t key, char ch, enum pk_ident ident);
+        void PrintKey(uint8_t mod, uint8_t key, char ch, uint8_t ident);
 
 protected:
         virtual void OnControlKeysChanged(uint8_t before, uint8_t after);
@@ -137,7 +137,7 @@ protected:
 	virtual void OnKeyPressed(uint8_t key);
 };
 
-void KbdRptParser::PrintKey(uint8_t m, uint8_t key, char ch, enum pk_ident ident)
+void KbdRptParser::PrintKey(uint8_t m, uint8_t key, char ch, uint8_t ident)
 {
     MODIFIERKEYS mod;
     *((uint8_t*)&mod) = m;
