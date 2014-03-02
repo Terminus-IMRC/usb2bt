@@ -50,10 +50,18 @@ void modRowAndColumn(uint8_t oem, int8_t *row, int8_t *col)
 
 void modPinNoForRowAndColumn(int8_t row, int8_t col, int8_t *prow, int8_t *pcol)
 {
+  Serial.print("modPinNoForRowAndColumn: ");
+  Serial.print("(row,col)=(");
+  Serial.print(row);
+  Serial.print(",");
+  Serial.print(col);
+  Serial.print(")");
   if((row<0)||(row>7)||(col<0)||(col>14)){
+    Serial.println(" is out of range");
     *prow=-1;
     *pcol=-1;
   }else{
+    Serial.println("");
     *prow=table_pinno_row[row];
     *pcol=table_pinno_col[col];
   }
