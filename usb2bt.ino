@@ -274,7 +274,7 @@ void setup()
     Serial.begin( 115200 );
     /* in this program we use serial port only for debug */
     //while (!Serial); // Wait for serial port to connect - used on Leonardo, Teensy and other boards with built-in USB CDC serial connection
-    Serial.println("Start");
+    Serial.println("Serial started");
 
     if (Usb.Init() == -1){
         Serial.println("Fatal error:");
@@ -286,14 +286,19 @@ void setup()
 		delay(200);
 	}
     }
+    Serial.println("Usb started");
     delay( 200 );
-    
+
     setNeededPinsToOutput();
+    Serial.print("Testing output ports...");
     fancy_test();
+    Serial.println("Done");
 
     next_time = millis() + 5000;
 
     HidKeyboard.SetReportParser(0, (HIDReportParser*)&Prs);
+
+    Serial.println("End of setup()");
 }
 
 void loop()
